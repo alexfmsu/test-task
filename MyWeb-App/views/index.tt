@@ -1,0 +1,33 @@
+<div class="main_menu">
+    <a href='generate' class='button'>Generate</a>
+    <a href='import' class='button'>Import from CSV</a>
+    <p>
+    <a href='print' class='button'>Print</a>
+</div>
+
+<% PERL_DATA %>
+
+<div id="page">
+    <div id="sidebar">
+    </div>
+
+    <div id="content">
+        <div id="header">
+        </div>
+
+        <div id="getting-started">
+            <div id="about-content" style="display: none;">
+            </div>
+
+            <script type="text/javascript">
+                $('#about_env_link').click(function() {
+                    $('#about-content').slideToggle('fast', function() {
+                        // ok
+                    });
+            
+                    return false;
+                });
+            </script>
+        </div>
+    </div>
+</div>

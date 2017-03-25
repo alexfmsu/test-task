@@ -1,0 +1,57 @@
+Файлы:
+
+./lib/Users/config.ini - config для Perl DBI (login, pass, host, db, tb) 
+login, pass, host - параметры MySQL
+db, tb - имя БД и таблицы (пользователи), создаются при отсутствии 
+
+./lib/Users/gen_csv.pl - генерация CVS-файла, содержащего <n> рандомных пар (name, phone) для импорта в таблицу tb
+
+Основные скрипты:
+./lib/Users/Users_DB.pm
+./lib/MyWeb/App.pm
+
+Генерация данных:
+    Создается таблица
+        CREATE TABLE IF NOT EXISTS $tb(
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(12) NOT NULL,
+                phone VARCHAR(11),
+                created DATETIME DEFAULT NOW()
+        ) ENGINE=InnoDB;
+
+    Заполнение:
+        insert конкатенаций values(name,phone)...(name,phone) группами (по 100_000) в цикле 0..30
+        либо:
+            perl gen_csv.pl data.csv 3000000 - генерация CVS-файла
+            +
+            импорт пар (name, phone) из CVS: load data local infile "' . $filename . '" into table '. $tb . 
+                                             ' fields terminated by "," lines terminated by "\r\n" (@col1, @col2) set name=@col1, phone=@col2'
+
+    После чего происходит создание индексов для полей 'name' и 'phone'(доп.):
+        CREATE INDEX name_index ON $tb(name) USING BTREE
+        CREATE INDEX phone_index ON $tb(phone) USING BTREE
+
+    Заполнение происходит в рамках транзакции
+
+    Время создания: порядка 4 мин. (генерации 3 млн. ранд. строк, insert, добавление индексов)
+
+Выборка:
+    my $data = $dbh->selectall_arrayref("SELECT * FROM $tb LIMIT $from, $count", {Columns=>{}}) or die $dbh->errstr;
+
+    Аналогично производится поиск по имени:
+        my $name_to_find = 'something';
+
+        my $sth = $dbh->prepare("select * from tb where name = ?");
+        $sth->execute($name_to_find);
+
+        my ($id, $name, $phone, $created) = $sth->fetchrow();
+
+        $sth->finish();
+ 
+        if(defined $id){
+            ....
+        }
+
+Запуск:
+plackup -r bin/app.psgi
+http://0.0.0.0:5000/
