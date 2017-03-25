@@ -1,4 +1,3 @@
-# <!DONE
 package Users_DB;
 
 use 5.16.0;
@@ -45,9 +44,7 @@ has 'connected'=>(
     isa=>'Bool',
     default=>0
 );
-# >!DONE
 
-# <!DONE
 sub connect{
     my $self = shift;
     
@@ -62,9 +59,7 @@ sub connect{
         $self->connected(1);
     }
 }
-# >!DONE
 
-# <!DONE
 sub create_database{
     my $self = shift;
     
@@ -87,9 +82,7 @@ sub create_database{
         die "Cannot create database database '$db': no connection" unless $connected;
     }
 }
-# >!DONE
 
-# <!DONE
 sub create_table{
     my $self = shift;
     
@@ -108,9 +101,7 @@ sub create_table{
         ) ENGINE=InnoDB"
     ) or die "Cannot create table $tb: " . $dbh->errstr;
 }
-# >!DONE
 
-# <!DONE
 sub drop_table{
     my $self = shift;
     
@@ -122,9 +113,7 @@ sub drop_table{
     
     $dbh->do("DROP TABLE IF EXISTS $tb") or die "Cannot drop table $tb: ". $dbh->errstr;
 }
-# >!DONE
 
-# <!DONE
 sub disconnect{
     my $self = shift;
     
@@ -136,9 +125,7 @@ sub disconnect{
     
     $dbh->disconnect() or die "Disconnect failed: ". $dbh->errstr;
 }
-# >!DONE
 
-# <!DONE defined(count>0), btree
 sub generate_data{
     my ($self, $count) = @_;
     
@@ -210,9 +197,7 @@ sub generate_data{
     $dbh->{PrintError} = $print_error;
     $dbh->{AutoCommit} = $auto_commit;
 }
-# <!DONE defined(count>0), btree
 
-# <!DONE btree, warnings
 sub import_from_csv{
     my ($self, $filename) = @_;
     
@@ -261,9 +246,7 @@ sub import_from_csv{
     $dbh->{PrintError} = $print_error;
     $dbh->{AutoCommit} = $auto_commit;    
 }
-# >!DONE btree, warnings
 
-# <!DONE
 sub get_data{
     my ($self, $from, $to) = @_;
     
@@ -282,10 +265,5 @@ sub get_data{
     
     return $data;
 }
-# >!DONE
 
 1;
-
-# ? table id & created
-# ? generate_data
-# ? insert index
